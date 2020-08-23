@@ -26,10 +26,12 @@ var Player = function(id){
 
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket){
+	console.log("New Connection");
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
 	
 	var player = Player(socket.id);
+	console.log("Player ID = " + socket.id);
 	PLAYER_LIST[socket.id] = player;
 	
 	socket.on('disconnect', function(){
