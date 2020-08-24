@@ -11,31 +11,87 @@ serv.listen(2000);
 console.log("Server started.");
  
 var SOCKET_LIST = {};
-var PLAYER_LIST = {};
+
+var Entity = function(){
+    var self ={
+        x:250,
+        y:250,
+        spdX:0,
+        spdY:0,
+        id:"",
+        }
+        self.update = function(){
+        self.updatePosition();
+        }
+        self.updatePosition = function(){
+            self.x += self.spdX;
+            self.y += self.spdY;
+        }
+        return self;
+    }
  
 var Player = function(id){
-	var self = {
-		x:250,
-		y:250,
-		id:id,
-		number:"" + Math.floor(10 * Math.random()),
-		pressingRight:false,
-		pressingLeft:false,
-		pressingUp:false,
-		pressingDown:false,	
-		maxSpd:10,
+	var self = Entity();
+	self.id = id;
+	self.number = "" + Math.floor(10* Math.random());
+	self.pressingRight = false;
+	self.pressingLeft = false;
+	self.pressingUp = false;
+	self.pressingDown = false;
+	self.maxSpd = 10;
+
+	var super_update = self.update;
+	self.update = function(){
+	    self.updateSpd();
+	    super_update();
 	}
-	self.updatePosition = function(){
+
+	self.updateSpd = function(){
 		if(self.pressingRight)
 			self.x += self.maxSpd;
-		if(self.pressingLeft)
+		else if(self.pressingLeft)
 			self.x -= self.maxSpd;
-		if(self.pressingUp)
-			self.y -= self.maxSpd;
-		if(self.pressingDown)
-			self.y += self.maxSpd;
+		else
+		    self.spdX = 0;
+	    if(self.pressingUp)
+	        self.spdY = -self.maxSpd;
+	    else if(self.pressingDown)
+	        self.spdY = self.maxSpd;
+	    else
+	        self.spdY = 0;
 	}
+	Player.list[id] = self;
 	return self;
+}
+Player.list = {};
+Player.onConnect = function(){
+    var player = Player(socket.id);
+    socket.on('keyPress',function(data){
+    		if(data.inputId === 'left')
+    			player.pressingLeft = data.state;
+    		else if(data.inputId === 'right')
+    			player.pressingRight = data.state;
+    		else if(data.inputId === 'up')
+    			player.pressingUp = data.state;
+    		else if(data.inputId === 'down')
+    			player.pressingDown = data.state;
+    	});
+}
+Player.onDisconnect = function(socket){
+    delete Player.list[socket.id];
+}
+Player.update = function(){
+    var pack= [];
+    for(var i in PLAYER_LIST){
+		var player = PLAYER_LIST[i];
+		player.update();
+		pack.push({
+			x:player.x,
+			y:player.y,
+			number:player.number
+		});
+	}
+	return pack;
 }
  
 var io = require('socket.io')(serv,{});
@@ -43,47 +99,20 @@ io.sockets.on('connection', function(socket){
 	console.log("New Connection");
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
- 
-	var player = Player(socket.id);
+
 	console.log("Player ID = " + socket.id);
-	PLAYER_LIST[socket.id] = player;
- 
+    Player.onConnect(socket);
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
-		delete PLAYER_LIST[socket.id];
+		Player.onDisconnect(socket);
 	});
- 
-	socket.on('keyPress',function(data){
-		if(data.inputId === 'left')
-			player.pressingLeft = data.state;
-		else if(data.inputId === 'right')
-			player.pressingRight = data.state;
-		else if(data.inputId === 'up')
-			player.pressingUp = data.state;
-		else if(data.inputId === 'down')
-			player.pressingDown = data.state;
-	});
- 
- 
 });
  
 setInterval(function(){
-	var pack = [];
-	for(var i in PLAYER_LIST){
-		var player = PLAYER_LIST[i];
-		player.updatePosition();
-		pack.push({
-			x:player.x,
-			y:player.y,
-			number:player.number
-		});		
-	}
+    var pack = Player.update();
+
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		socket.emit('newPositions',pack);
 	}
- 
- 
- 
- 
 },1000/25);
