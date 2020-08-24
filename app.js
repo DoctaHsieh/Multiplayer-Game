@@ -19,16 +19,16 @@ var Entity = function(){
         spdX:0,
         spdY:0,
         id:"",
-        }
-        self.update = function(){
-        self.updatePosition();
-        }
-        self.updatePosition = function(){
-            self.x += self.spdX;
-            self.y += self.spdY;
-        }
-        return self;
     }
+    self.update = function(){
+    self.updatePosition();
+    }
+    self.updatePosition = function(){
+         self.x += self.spdX;
+         self.y += self.spdY;
+    }
+    return self;
+}
  
 var Player = function(id){
 	var self = Entity();
@@ -64,17 +64,17 @@ var Player = function(id){
 	return self;
 }
 Player.list = {};
-Player.onConnect = function(){
+Player.onConnect = function(socket){
     var player = Player(socket.id);
     socket.on('keyPress',function(data){
-    		if(data.inputId === 'left')
-    			player.pressingLeft = data.state;
-    		else if(data.inputId === 'right')
-    			player.pressingRight = data.state;
-    		else if(data.inputId === 'up')
-    			player.pressingUp = data.state;
-    		else if(data.inputId === 'down')
-    			player.pressingDown = data.state;
+    	if(data.inputId === 'left')
+    		player.pressingLeft = data.state;
+    	else if(data.inputId === 'right')
+    		player.pressingRight = data.state;
+    	else if(data.inputId === 'up')
+    		player.pressingUp = data.state;
+    	else if(data.inputId === 'down')
+    		player.pressingDown = data.state;
     	});
 }
 Player.onDisconnect = function(socket){
@@ -82,8 +82,8 @@ Player.onDisconnect = function(socket){
 }
 Player.update = function(){
     var pack= [];
-    for(var i in PLAYER_LIST){
-		var player = PLAYER_LIST[i];
+    for(var i in Player.list){
+		var player = Player.list[i];
 		player.update();
 		pack.push({
 			x:player.x,
