@@ -312,7 +312,7 @@ setInterval(function(){
 	}
 
 	for(var i in SOCKET_LIST){
-		var socket = SOCKET_LdeIST[i];
+		var socket = SOCKET_LIST[i];
 		socket.emit('init',initPack);
 		socket.emit('update',pack);
 		socket.emit('remove',removePack);
