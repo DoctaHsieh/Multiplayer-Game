@@ -8,6 +8,7 @@ var serv = require('http').Server(app);
 
 
 app.get('/',function(req, res) {
+    console.log("Hello World");
 	res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client',express.static(__dirname + '/client'));
