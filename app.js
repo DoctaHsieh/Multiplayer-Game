@@ -1,16 +1,19 @@
-var mongojs = require("mongojs");
-var db = mongojs('localhost:27017/myGame', ['account','progress']);
+//var mongojs = require("mongojs");
+var db = null;//mongojs('localhost:27017/myGame', ['account','progress']);
 
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 
+
+
 app.get('/',function(req, res) {
+    console.log("Hello World");
 	res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client',express.static(__dirname + '/client'));
 
-serv.listen(2000);
+serv.listen(process.env.PORT || 2000);
 console.log("Server started.");
 
 var SOCKET_LIST = {};
@@ -47,6 +50,9 @@ var Player = function(id){
 	self.pressingAttack = false;
 	self.mouseAngle = 0;
 	self.maxSpd = 10;
+	self.hp = 10;
+	self.hpMax = 10;
+	self.score = 0;
 
 	var super_update = self.update;
 	self.update = function(){
@@ -78,14 +84,31 @@ var Player = function(id){
 		else
 			self.spdY = 0;
 	}
+
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+			number:self.number,
+			hp:self.hp,
+			hpMax:self.hpMax,
+			score:self.score,
+		};
+	}
+	self.getUpdatePack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+			hp:self.hp,
+			score:self.score,
+		}
+	}
+
 	Player.list[id] = self;
 
-	initPack.player.push({
-		id:self.id,
-		x:self.x,
-		y:self.y,
-		number:self.number,
-	});
+	initPack.player.push(self.getInitPack());
 	return self;
 }
 Player.list = {};
@@ -105,7 +128,20 @@ Player.onConnect = function(socket){
 		else if(data.inputId === 'mouseAngle')
 			player.mouseAngle = data.state;
 	});
+
+	socket.emit('init',{
+		selfId:socket.id,
+		player:Player.getAllInitPack(),
+		bullet:Bullet.getAllInitPack(),
+	})
 }
+Player.getAllInitPack = function(){
+	var players = [];
+	for(var i in Player.list)
+		players.push(Player.list[i].getInitPack());
+	return players;
+}
+
 Player.onDisconnect = function(socket){
 	delete Player.list[socket.id];
 	removePack.player.push(socket.id);
@@ -115,11 +151,7 @@ Player.update = function(){
 	for(var i in Player.list){
 		var player = Player.list[i];
 		player.update();
-		pack.push({
-			id:player.id,
-			x:player.x,
-			y:player.y,
-		});
+		pack.push(player.getUpdatePack());
 	}
 	return pack;
 }
@@ -142,17 +174,37 @@ var Bullet = function(parent,angle){
 		for(var i in Player.list){
 			var p = Player.list[i];
 			if(self.getDistance(p) < 32 && self.parent !== p.id){
-				//handle collision. ex: hp--;
+				p.hp -= 1;
+
+				if(p.hp <= 0){
+					var shooter = Player.list[self.parent];
+					if(shooter)
+						shooter.score += 1;
+					p.hp = p.hpMax;
+					p.x = Math.random() * 500;
+					p.y = Math.random() * 500;
+				}
 				self.toRemove = true;
 			}
 		}
 	}
+	self.getInitPack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		};
+	}
+	self.getUpdatePack = function(){
+		return {
+			id:self.id,
+			x:self.x,
+			y:self.y,
+		};
+	}
+
 	Bullet.list[self.id] = self;
-	initPack.bullet.push({
-		id:self.id,
-		x:self.x,
-		y:self.y,
-	});
+	initPack.bullet.push(self.getInitPack());
 	return self;
 }
 Bullet.list = {};
@@ -166,37 +218,43 @@ Bullet.update = function(){
 			delete Bullet.list[i];
 			removePack.bullet.push(bullet.id);
 		} else
-			pack.push({
-				id:bullet.id,
-				x:bullet.x,
-				y:bullet.y,
-			});
+			pack.push(bullet.getUpdatePack());
 	}
 	return pack;
+}
+
+Bullet.getAllInitPack = function(){
+	var bullets = [];
+	for(var i in Bullet.list)
+		bullets.push(Bullet.list[i].getInitPack());
+	return bullets;
 }
 
 var DEBUG = true;
 
 var isValidPassword = function(data,cb){
-	db.account.find({username:data.username,password:data.password},function(err,res){
+    return cb(true);
+	/*db.account.find({username:data.username,password:data.password},function(err,res){
 		if(res.length > 0)
 			cb(true);
 		else
 			cb(false);
-	});
+	});*/
 }
 var isUsernameTaken = function(data,cb){
-	db.account.find({username:data.username},function(err,res){
+    return cb(false);
+	/*db.account.find({username:data.username},function(err,res){
 		if(res.length > 0)
 			cb(true);
 		else
 			cb(false);
-	});
+	});*/
 }
 var addUser = function(data,cb){
-	db.account.insert({username:data.username,password:data.password},function(err){
+    return cb();
+	/*db.account.insert({username:data.username,password:data.password},function(err){
 		cb();
-	});
+	});*/
 }
 
 var io = require('socket.io')(serv,{});
@@ -271,3 +329,5 @@ setInterval(function(){
 	removePack.bullet = [];
 
 },1000/25);
+
+
