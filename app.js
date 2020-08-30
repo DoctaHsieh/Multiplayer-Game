@@ -117,6 +117,7 @@ var Player = function(param){
 			y:self.y,
 			hp:self.hp,
 			score:self.score,
+			map:self.map,
 		}
 	}
 
@@ -147,6 +148,13 @@ Player.onConnect = function(socket){
 			player.pressingAttack = data.state;
 		else if(data.inputId === 'mouseAngle')
 			player.mouseAngle = data.state;
+	});
+
+	socket.on('changeMap',function(data){
+		if(player.map === 'field')
+			player.map = 'forest';
+		else
+			player.map = 'field';
 	});
 
 	socket.emit('init',{
@@ -352,5 +360,23 @@ setInterval(function(){
 	removePack.bullet = [];
 
 },1000/25);
+
+/*
+var profiler = require('v8-profiler');
+var fs = require('fs');
+var startProfiling = function(duration){
+	profiler.startProfiling('1', true);
+	setTimeout(function(){
+		var profile1 = profiler.stopProfiling('1');
+
+		profile1.export(function(error, result) {
+			fs.writeFile('./profile.cpuprofile', result);
+			profile1.delete();
+			console.log("Profile saved.");
+		});
+	},duration);
+}
+startProfiling(10000);
+*/
 
 
