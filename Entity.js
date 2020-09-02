@@ -1,6 +1,4 @@
 
-
-
 var initPack = {player:[],bullet:[]};
 var removePack = {player:[],bullet:[]};
 
@@ -75,7 +73,7 @@ Player = function(param){
 	self.hp = 10;
 	self.hpMax = 10;
 	self.score = 0;
-	self.inventory = new Inventory(param.progress.items, param.socket,true);
+	self.inventory = new Inventory(param.progress.items,param.socket,true);
 
 	var super_update = self.update;
 	self.update = function(){
@@ -144,7 +142,7 @@ Player = function(param){
 	return self;
 }
 Player.list = {};
-Player.onConnect = function(socket,username, progress){
+Player.onConnect = function(socket,username,progress){
 	var map = 'forest';
 	if(Math.random() < 0.5)
 		map = 'field';
@@ -211,13 +209,13 @@ Player.getAllInitPack = function(){
 }
 
 Player.onDisconnect = function(socket){
-    let player = Player.list[socket.id];
-    if(!player)
-        return;
-    Database.savePlayerProgress({
-       username:player.username,
-       items:player.inventory.items,
-    })
+	let player = Player.list[socket.id];
+	if(!player)
+		return;
+	Database.savePlayerProgress({
+		username:player.username,
+		items:player.inventory.items,
+	});
 	delete Player.list[socket.id];
 	removePack.player.push(socket.id);
 }
