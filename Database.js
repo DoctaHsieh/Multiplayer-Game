@@ -38,9 +38,15 @@ Database.addUser = function(data,cb){
 Database.getPlayerProgress = function(username,cb){
     if(!USE_DB)
         return cb({items:[]});
+    // Load the player info from the database.
+	// What if it is a new player so no record is found???
 	db.progress.findOne({username:username},function(err,res){
-	  if (items)
-		cb({items:res.items});
+	  if (res != null){
+			cb({items: res.items});
+		}
+	  else
+	  	console.log ("no Player Progress found!!")
+		// What should you do?
 	});
 }
 Database.savePlayerProgress = function(data,cb){

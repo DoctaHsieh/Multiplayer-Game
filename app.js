@@ -34,6 +34,7 @@ io.sockets.on('connection', function(socket){
 		Database.isValidPassword(data,function(res){
 			if(!res)
 				return socket.emit('signInResponse',{success:false});
+			console.log(res);
 			Database.getPlayerProgress(data.username,function(progress){
 				Player.onConnect(socket,data.username,progress);
 				socket.emit('signInResponse',{success:true});
@@ -45,6 +46,7 @@ io.sockets.on('connection', function(socket){
 			if(res){
 				socket.emit('signUpResponse',{success:false});
 			} else {
+				console.log("Server - addUser.");
 				Database.addUser(data,function(){
 					socket.emit('signUpResponse',{success:true});
 				});
