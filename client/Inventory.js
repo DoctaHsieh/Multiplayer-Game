@@ -1,4 +1,6 @@
 Inventory = function(items,socket,server){
+    if (items.length > 0){
+
     var self = {
         items:items, //{id:"itemId",amount:1}
 		socket:socket,
@@ -68,6 +70,7 @@ Inventory = function(items,socket,server){
 	}
 
 	return self;
+    }
 }
 
 

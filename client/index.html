@@ -100,6 +100,7 @@
 	}
 
 	var inventory = new Inventory(socket,false);
+
 	socket.on('updateInventory',function(items){
 		inventory.items = items;
 		inventory.refreshRender();
