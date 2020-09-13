@@ -10,10 +10,9 @@ Database.isValidPassword = function(data,cb){
     if(!USE_DB)
         return cb(true);
 	db.account.findOne({username:data.username,password:data.password},function(err,res){
-		if(res)
+		if(res[0])
 			cb(true);
-		else
-			cb(false);
+		    cb(USERS[data.username] === data.password);
 	});
 }
 Database.isUsernameTaken = function(data,cb){
