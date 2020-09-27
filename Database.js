@@ -10,9 +10,10 @@ Database.isValidPassword = function(data,cb){
     if(!USE_DB)
         return cb(true);
 	db.account.findOne({username:data.username,password:data.password},function(err,res){
-		if(res[0])
+		if(res)
 			cb(true);
-		    cb(USERS[data.username] === data.password);
+		else
+		    cb(false);
 	});
 }
 Database.isUsernameTaken = function(data,cb){
@@ -29,9 +30,7 @@ Database.addUser = function(data,cb){
     if(!USE_DB)
         return cb();
 	db.account.insert({username:data.username,password:data.password},function(err){
-        Database.savePlayerProgress({username:data.username,items:[]},function(){
             cb();
-        })
 	});
 }
 Database.getPlayerProgress = function(username,cb){
