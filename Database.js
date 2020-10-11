@@ -2,6 +2,7 @@ var USE_DB = true;
 var mongojs = USE_DB ? require("mongojs") : null;
 var db = USE_DB ? mongojs('localhost:27017/myGame', ['account','progress']) : null;
 
+
 //account:  {username:string, password:string}
 //progress:  {username:string, items:[{id:string,amount:number}]}
 
@@ -44,7 +45,7 @@ Database.getPlayerProgress = function(username,cb){
 		}
 	  else
 	  	console.log ("no Player Progress found!!")
-		// What should you do?
+		// What should` you do?
 	});
 }
 Database.savePlayerProgress = function(data,cb){
