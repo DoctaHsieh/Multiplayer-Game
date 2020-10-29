@@ -1,10 +1,6 @@
-
-
-
-
-
 require('./client/Inventory');
 require('./Entity');
+require('./Database')
 
 
 var mongojs = require("mongojs");
@@ -55,15 +51,15 @@ io.sockets.on('connection', function(socket){
 	SOCKET_LIST[socket.id] = socket;
 
 	socket.on('signIn',function(data){ //{username,password}
-	    isValidPassword(data,function(socket){
-			if(res){
-            	Player.onConnect(socket);
-            	socket.emit('signInResponse',{success:true});
-            } else {
-            	socket.emit('signInResponse',{success:false});
-            }
-		});
-	});
+    		Database.isValidPassword(data,function(res){
+    			if(!res)
+    				return socket.emit('signInResponse',{success:false});
+
+    				Player.onConnect(socket);
+    				socket.emit('signInResponse',{success:true});
+
+    		});
+    	});
 	socket.on('signUp',function(data){
 		isUsernameTaken(data,function(res){
 			if(res){
@@ -105,7 +101,3 @@ setInterval(function(){
 	}
 
 },1000/25);
-
-
-
-
