@@ -8,30 +8,24 @@ var db = USE_DB ? mongojs('localhost:27017/myGame', ['account','progress']) : nu
 
 Database = {};
 Database.isValidPassword = function(data,cb){
-    if(!USE_DB)
-        return cb(true);
-	db.account.findOne({username:data.username,password:data.password},function(err,res){
-		if(res)
+	db.account.find({username:data.username,password:data.password},function(err,res){
+		if(res.length > 0)
 			cb(true);
 		else
-		    cb(false);
+			cb(false);
 	});
 }
 Database.isUsernameTaken = function(data,cb){
-    if(!USE_DB)
-        return cb(false);
-	db.account.findOne({username:data.username},function(err,res){
-		if(res)
+	db.account.find({username:data.username},function(err,res){
+		if(res.length > 0)
 			cb(true);
 		else
 			cb(false);
 	});
 }
 Database.addUser = function(data,cb){
-    if(!USE_DB)
-        return cb();
 	db.account.insert({username:data.username,password:data.password},function(err){
-            cb();
+		cb();
 	});
 }
 Database.getPlayerProgress = function(username,cb){
