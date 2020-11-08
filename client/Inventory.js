@@ -1,12 +1,10 @@
 Inventory = function(items,socket,server){
-    if (items.length > 0){
-
-    var self = {
-        items:items, //{id:"itemId",amount:1}
+	var self = {
+		items:items, //{id:"itemId",amount:1}
 		socket:socket,
 		server:server,
-    }
-    self.addItem = function(id,amount){
+	}
+	self.addItem = function(id,amount){
 		for(var i = 0 ; i < self.items.length; i++){
 			if(self.items[i].id === id){
 				self.items[i].amount += amount;
@@ -16,8 +14,8 @@ Inventory = function(items,socket,server){
 		}
 		self.items.push({id:id,amount:amount});
 		self.refreshRender();
-    }
-    self.removeItem = function(id,amount){
+	}
+	self.removeItem = function(id,amount){
 		for(var i = 0 ; i < self.items.length; i++){
 			if(self.items[i].id === id){
 				self.items[i].amount -= amount;
@@ -27,15 +25,15 @@ Inventory = function(items,socket,server){
 				return;
 			}
 		}
-    }
-    self.hasItem = function(id,amount){
+	}
+	self.hasItem = function(id,amount){
 		for(var i = 0 ; i < self.items.length; i++){
 			if(self.items[i].id === id){
 				return self.items[i].amount >= amount;
 			}
 		}
 		return false;
-    }
+	}
 	self.refreshRender = function(){
 		//server
 		if(self.server){
@@ -70,7 +68,6 @@ Inventory = function(items,socket,server){
 	}
 
 	return self;
-    }
 }
 
 
