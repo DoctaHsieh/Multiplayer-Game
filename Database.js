@@ -37,9 +37,10 @@ Database.getPlayerProgress = function(username,cb){
 	  if (res != null){
 			cb({items: res.items});
 		}
-	  else
-	  	console.log ("no Player Progress found!!")
-		// What should` you do?
+	  else {
+	  	console.log ("no Player Progress found!! Initiating new items");
+		  cb({items:[]})
+	  }
 	});
 }
 Database.savePlayerProgress = function(data,cb){
