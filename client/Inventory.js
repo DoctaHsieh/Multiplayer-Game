@@ -89,6 +89,12 @@ Item("potion","Potion",function(player){
 });
 
 Item("superAttack","Super Attack",function(player){
+	player.inventory.addItem("shield", 1)
 	for(var i = 0 ; i < 360; i++)
 		player.shootBullet(i);
+});
+Item("shield","Shield",function(player){
+	player.shield = 10;
+	player.inventory.removeItem("shield",1);
+	player.inventory.addItem("potion",1);
 });

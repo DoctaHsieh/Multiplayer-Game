@@ -131,6 +131,8 @@
 		self.y = initPack.y;
 		self.hp = initPack.hp;
 		self.hpMax = initPack.hpMax;
+		self.shield =  initPack.shield;
+        self.shieldMax = initPack.shieldMax;
 		self.score = initPack.score;
 		self.map = initPack.map;
 
@@ -143,6 +145,10 @@
 			var hpWidth = 30 * self.hp / self.hpMax;
 			ctx.fillStyle = 'red';
 			ctx.fillRect(x - hpWidth/2,y - 40,hpWidth,4);
+
+            var shieldWidth = 30 * self.shield / self.shieldMax;
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(x - shieldWidth/2,y - 50,shieldWidth,4);
 
 			var width = Img.player.width*2;
 			var height = Img.player.height*2;
@@ -215,6 +221,8 @@
 					p.y = pack.y;
 				if(pack.hp !== undefined)
 					p.hp = pack.hp;
+				if(pack.shield !== undefined)
+				    p.shield = pack.shield;
 				if(pack.score !== undefined)
 					p.score = pack.score;
 				if(pack.map !== undefined)
