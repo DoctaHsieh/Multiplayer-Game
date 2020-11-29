@@ -72,6 +72,8 @@ Player = function(param){
 	self.maxSpd = 10;
 	self.hp = 10;
 	self.hpMax = 10;
+	self.shield = 10;
+	self.shieldMax = 10;
 	self.score = 0;
 	self.inventory = new Inventory(param.progress.items,param.socket,true);
 
@@ -121,6 +123,8 @@ Player = function(param){
 			number:self.number,
 			hp:self.hp,
 			hpMax:self.hpMax,
+			shield:self.shield,
+			shieldMax:self.shieldMax,
 			score:self.score,
 			map:self.map,
 		};
@@ -131,6 +135,7 @@ Player = function(param){
 			x:self.x,
 			y:self.y,
 			hp:self.hp,
+			shield:self.shield,
 			score:self.score,
 			map:self.map,
 		}
@@ -249,17 +254,23 @@ Bullet = function(param){
 		for(var i in Player.list){
 			var p = Player.list[i];
 			if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id){
-				p.hp -= 1;
+				if(p.shield ==0 ) {
+					p.hp -= 1;
 
-				if(p.hp <= 0){
-					var shooter = Player.list[self.parent];
-					if(shooter)
-						shooter.score += 1;
-					p.hp = p.hpMax;
-					p.x = Math.random() * 500;
-					p.y = Math.random() * 500;
+					if (p.hp <= 0) {
+						var shooter = Player.list[self.parent];
+						if (shooter)
+							shooter.score += 1;
+						p.hp = p.hpMax;
+						p.x = Math.random() * 500;
+						p.y = Math.random() * 500;
+					}
+					self.toRemove = true;
 				}
-				self.toRemove = true;
+				else if (p.shield >= 1){
+					p.shield -= 1
+				}
+
 			}
 		}
 	}
