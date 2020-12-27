@@ -83,7 +83,12 @@ Item = function(id,name,event){
 Item.list = {};
 
 Item("potion","Potion",function(player){
-	player.hp = 10;
+	if(player.hp <= 9) {
+		player.hp = player.hp + 5;
+	}
+	else if(player.hp > 10){
+		player.hp = player.hp +0;
+	}
 	player.inventory.removeItem("potion",1);
 	player.inventory.addItem("superAttack",1);
 });
@@ -95,7 +100,8 @@ Item("superAttack","Super Attack",function(player){
 
 });
 Item("shield","Shield",function(player){
-	player.shield = 10;
+	console.log(player.shield);
+	player.shield = player.shield + 5;
 	player.inventory.removeItem("shield",1);
 
 });
