@@ -72,7 +72,7 @@ Player = function(param){
 	self.maxSpd = 10;
 	self.hp = 10;
 	self.hpMax = 10;
-	self.shield = 0;
+	self.shield = 1;
 	self.shieldMax = 10;
 	self.score = 0;
 	self.inventory = new Inventory(param.socket,true);
@@ -124,7 +124,7 @@ Player = function(param){
 			hp:self.hp,
 			hpMax:self.hpMax,
 			shield:self.shield,
-			shield:self.shieldMax,
+			shieldMax:self.shieldMax,
 			score:self.score,
 			map:self.map,
 		};

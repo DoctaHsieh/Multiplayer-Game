@@ -118,6 +118,10 @@
 	Img.map['field'].src = '/client/img/map.png';
 	Img.map['forest'] = new Image();
 	Img.map['forest'].src = '/client/img/map2.png';
+	Img.ocean = {};
+	Img.ocean['background'] = new Image();
+    Img.ocean['background'].src = '/client/img/Ocean.jpg';
+
 
 	var ctx = document.getElementById("ctx").getContext("2d");
 	var ctxUi = document.getElementById("ctx-ui").getContext("2d");
@@ -268,6 +272,21 @@
 		var x = WIDTH/2 - player.x;
 		var y = HEIGHT/2 - player.y;
 		ctx.drawImage(Img.map[player.map],x,y);
+        var x = WIDTH * 1.75 - player.x;
+        var y = HEIGHT/2 - player.y;
+        ctx.drawImage(Img.map[player.map],x,y);
+        var x = WIDTH/2 - player.x;
+        var y = HEIGHT*1.45 - player.y;
+        ctx.drawImage(Img.map[player.map],x,y);
+        var x = WIDTH * 1.75 - player.x;
+        var y = HEIGHT*1.45 - player.y;
+        ctx.drawImage(Img.map[player.map],x,y);
+        var x = WIDTH/2 - player.x;
+        var y = HEIGHT/2 - player.y;
+        ctx.drawImage(Img.map[player.map],x,y);
+        //var x = WIDTH/2 - player.x;
+        //var y = HEIGHT/2 - player.y;
+        //ctx.drawImage(Img.ocean[player.map],x,y);
 	}
 
 	var drawScore = function(){

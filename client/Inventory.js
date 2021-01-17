@@ -101,7 +101,12 @@ Item("superAttack","Super Attack",function(player){
 });
 Item("shield","Shield",function(player){
 	console.log(player.shield);
-	player.shield = player.shield + 5;
+	if(player.shield <= 9) {
+		player.shield = player.shield + 5;
+	}
+	else if(player.shield > 10){
+		player.shield = player.shield +0;
+	}
 	player.inventory.removeItem("shield",1);
 
 });
