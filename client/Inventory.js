@@ -1,6 +1,6 @@
-Inventory = function(items,socket,server){
+Inventory = function(socket,server){
 	var self = {
-		items:items, //{id:"itemId",amount:1}
+		items:[], //{id:"itemId",amount:1}
 		socket:socket,
 		server:server,
 	}
@@ -83,12 +83,30 @@ Item = function(id,name,event){
 Item.list = {};
 
 Item("potion","Potion",function(player){
-	player.hp = 10;
+	if(player.hp <= 9) {
+		player.hp = player.hp + 5;
+	}
+	else if(player.hp > 10){
+		player.hp = player.hp +0;
+	}
 	player.inventory.removeItem("potion",1);
 	player.inventory.addItem("superAttack",1);
 });
 
 Item("superAttack","Super Attack",function(player){
+	player.inventory.addItem("shield", 1)
 	for(var i = 0 ; i < 360; i++)
 		player.shootBullet(i);
+
+});
+Item("shield","Shield",function(player){
+	console.log(player.shield);
+	if(player.shield <= 9) {
+		player.shield = player.shield + 5;
+	}
+	else if(player.shield > 10){
+		player.shield = player.shield +0;
+	}
+	player.inventory.removeItem("shield",1);
+
 });

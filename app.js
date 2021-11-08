@@ -24,7 +24,7 @@ var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
-
+	
 	socket.on('signIn',function(data){ //{username,password}
 		Database.isValidPassword(data,function(res){
 			if(!res)
@@ -38,30 +38,30 @@ io.sockets.on('connection', function(socket){
 	socket.on('signUp',function(data){
 		Database.isUsernameTaken(data,function(res){
 			if(res){
-				socket.emit('signUpResponse',{success:false});
+				socket.emit('signUpResponse',{success:false});		
 			} else {
 				Database.addUser(data,function(){
-					socket.emit('signUpResponse',{success:true});
+					socket.emit('signUpResponse',{success:true});					
 				});
 			}
-		});
+		});		
 	});
-
-
+	
+	
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
 		Player.onDisconnect(socket);
 	});
-
+	
 	socket.on('evalServer',function(data){
 		if(!DEBUG)
 			return;
 		var res = eval(data);
-		socket.emit('evalAnswer',res);
+		socket.emit('evalAnswer',res);		
 	});
-
-
-
+	
+	
+	
 });
 
 
@@ -73,5 +73,5 @@ setInterval(function(){
 		socket.emit('update',packs.updatePack);
 		socket.emit('remove',packs.removePack);
 	}
-
+	
 },1000/25);
