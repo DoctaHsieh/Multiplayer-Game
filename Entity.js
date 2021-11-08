@@ -1,4 +1,3 @@
-
 var initPack = {player:[],bullet:[]};
 var removePack = {player:[],bullet:[]};
 

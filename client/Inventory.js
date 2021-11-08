@@ -109,9 +109,6 @@ Item("shield","Shield",function(player){
 	}
 	player.inventory.removeItem("shield",1);
 
+
 });
-
-
-
-
 
